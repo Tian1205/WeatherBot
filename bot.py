@@ -108,9 +108,7 @@ def get_weather(city):
 def make_weather_text():
     now = datetime.now(ZoneInfo("Asia/Taipei"))
 
-    text = (
-        "🌦️ **世界天氣預報**\n\n"
-    )
+    text = "🌦️ **世界天氣預報**\n\n"
 
     for display_name, city in cities:
         try:
@@ -126,7 +124,7 @@ def make_weather_text():
             )
 
         except Exception as e:
-            print(f"{display_name} 天氣取得失敗：{e}")
+            print(f"{display_name} 天氣取得失敗：{e}", flush=True)
 
             text += (
                 f"{display_name}\n"
@@ -142,13 +140,13 @@ def make_weather_text():
 
 @bot.event
 async def on_ready():
-    print(f"已登入：{bot.user}")
+    print(f"已登入：{bot.user}", flush=True)
 
-    print("Bot 目前看得到的伺服器與頻道：")
+    print("Bot 目前看得到的伺服器與頻道：", flush=True)
     for guild in bot.guilds:
-        print(f"伺服器：{guild.name}")
+        print(f"伺服器：{guild.name}", flush=True)
         for ch in guild.text_channels:
-            print(f"頻道：{ch.name} | ID：{ch.id}")
+            print(f"頻道：{ch.name} | ID：{ch.id}", flush=True)
 
     if not update_weather.is_running():
         update_weather.start()
@@ -160,19 +158,19 @@ async def update_weather():
     channel = bot.get_channel(CHANNEL_ID)
 
     if channel is None:
-        print(f"找不到頻道：{CHANNEL_ID}")
+        print(f"找不到頻道：{CHANNEL_ID}", flush=True)
         return
 
     try:
         if weather_message is None:
             weather_message = await channel.send(make_weather_text())
-            print("天氣訊息建立")
+            print("天氣訊息建立", flush=True)
         else:
             await weather_message.edit(content=make_weather_text())
-            print("天氣已更新")
+            print("天氣已更新", flush=True)
 
     except Exception as e:
-        print(f"更新天氣錯誤：{e}")
+        print(f"更新天氣錯誤：{e}", flush=True)
 
 if TOKEN is None:
     raise ValueError("找不到 DISCORD_TOKEN")
@@ -181,4 +179,7 @@ if WEATHER_API is None:
     raise ValueError("找不到 OPENWEATHER_API_KEY")
 
 threading.Thread(target=run_web_server, daemon=True).start()
+
+print("WeatherBot 啟動中...", flush=True)
+
 bot.run(TOKEN)
